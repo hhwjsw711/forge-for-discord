@@ -63,7 +63,7 @@ export function AccessDenied() {
                 id="denied-title"
                 className="text-xl font-semibold tracking-tight"
               >
-                No access
+                This account can't use Forge
               </h1>
               <p className="text-sm text-[var(--color-muted)]">
                 Forge is limited to Convex team accounts.
@@ -74,11 +74,13 @@ export function AccessDenied() {
           {cachedEmail ? (
             <p className="rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-ink)]">
               Signed in as <span className="font-medium">{cachedEmail}</span>.
+              That address is not on the Convex team allowlist.
             </p>
           ) : null}
 
           <p className="text-sm text-[var(--color-muted)]">
-            Forge is limited to Convex team accounts.
+            Sign in with a GitHub account whose primary email ends in
+            <span className="font-mono"> @convex.dev</span> to continue.
           </p>
 
           <Link
@@ -86,7 +88,7 @@ export function AccessDenied() {
             className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-ink)] bg-[var(--color-ink)] px-4 py-2.5 text-sm font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px"
           >
             <SignInIcon size={16} weight="bold" aria-hidden />
-            <span>Try another account</span>
+            <span>Use a different account</span>
           </Link>
         </div>
       </section>

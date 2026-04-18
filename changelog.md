@@ -4,6 +4,11 @@ All notable changes to Forge. Format follows [keepachangelog.com](https://keepac
 
 ## [Unreleased]
 
+### Changed
+
+- App-wide UI polish pass on 2026-04-18. `index.html` now preloads Inter and JetBrains Mono from Google Fonts so the Matter fallback never shows a system font by default. `src/styles/index.css` swaps the `--font-sans` primary to Inter with proper fallbacks, enables font features (`ss01`, `cv11`, `cv02`) and antialiasing, tightens heading letter-spacing, softens the workspace background gradient, adds a global `:focus-visible` outline that matches the ink token, and honors `prefers-reduced-motion` by stripping transitions for opted-in users. No tokens or layouts changed.
+- Copy clarity pass across the auth and dashboard surfaces. `src/components/auth/SignIn.tsx` subtitle now reads "Design Discord forms and review submissions in one place" and the pending button reads "Opening GitHub". `src/pages/AccessDenied.tsx` leads with "This account can't use Forge", explains the allowlist rule inline with the signed-in email, and the retry button reads "Use a different account". `src/pages/Dashboard.tsx` greets the user with "Jump back in", tightens the quick-link descriptions, and reframes the connect banner to "Connect a Discord server to get started". `src/pages/Forms.tsx` retitles the workspace to "Your forms" with a plain-English subtitle and adds `role="status"` / `aria-live="polite"` to its loading state. `src/pages/NewForm.tsx` simplifies field helper text, updates the submit hint to "Next: add fields, pick a channel, then publish", and rewrites every `formatCreateError` branch to tell the admin what to do next. `src/pages/Settings.tsx` clarifies the Discord server description, the empty state, the disconnect confirmation ("can't be undone"), and every `errorMessage` / `formatDisconnectError` branch. All button labels that hang while a network call runs now append a trailing ellipsis so the pending state reads as in-progress, not a second verb.
+
 ### Added
 
 - Developer marketing intro in `README.md`. Opening section now explains who Forge is for, what it replaces, and the stack tradeoffs (Convex-only deployment, type-safe end to end, reactive subscriptions, Ed25519 verify) so the README doubles as the pitch used for SEO previews.

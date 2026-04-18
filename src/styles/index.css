@@ -13,14 +13,17 @@
   --color-danger: #c14040;
   --color-warning: #d4a200;
 
-  --font-sans: "Matter", "Inter", system-ui, sans-serif;
+  --font-sans:
+    "Inter", "Matter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
   --font-serif: "Playfair Display", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;
 
   --radius-window: 12px;
 
-  --shadow-window: 2px 3px 0 rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-window:
+    2px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 html,
@@ -28,30 +31,83 @@ body {
   background:
     radial-gradient(
       circle at top left,
-      color-mix(in oklab, var(--color-accent) 8%, var(--color-bg)) 0%,
-      transparent 28%
+      color-mix(in oklab, var(--color-accent) 6%, var(--color-bg)) 0%,
+      transparent 30%
     ),
     radial-gradient(
       circle at top right,
-      color-mix(in oklab, var(--color-success) 8%, var(--color-bg)) 0%,
-      transparent 24%
+      color-mix(in oklab, var(--color-success) 5%, var(--color-bg)) 0%,
+      transparent 26%
     ),
     linear-gradient(
       180deg,
-      color-mix(in oklab, var(--color-bg) 92%, white) 0%,
+      color-mix(in oklab, var(--color-bg) 94%, white) 0%,
       var(--color-bg) 100%
     );
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
+  /* Inter reads better with these features turned on. */
+  font-feature-settings:
+    "ss01", "cv11", "cv02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 #root {
   min-height: 100dvh;
 }
 
+/* Tighten tracking on larger headings so Inter matches the window aesthetic. */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}
+
+/* Monospace surfaces (slash command names, IDs, JSON) inherit JetBrains Mono
+   through explicit utilities; this keeps pre/code tags aligned when used raw. */
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+  font-feature-settings: "calt", "ss01";
+}
+
 ::selection {
   background: color-mix(in oklab, var(--color-accent) 18%, white);
   color: var(--color-ink);
+}
+
+/* Consistent keyboard focus across the app. Avoids the browser default blue
+   ring and matches the workspace palette. */
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-ink) 85%, transparent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Buttons and links already ship their own border/background treatments,
+   so skip the generic outline for them and let their own focus styles show. */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-ink) 85%, transparent);
+  outline-offset: 2px;
+}
+
+/* Honor reduced-motion preferences by stripping transitions on opt-in users. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

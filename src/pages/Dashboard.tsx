@@ -73,7 +73,7 @@ export function Dashboard() {
             className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)] disabled:opacity-60"
           >
             <SignOut size={16} weight="bold" aria-hidden />
-            <span>{pending ? "Signing out" : "Sign out"}</span>
+            <span>{pending ? "Signing out..." : "Sign out"}</span>
           </button>
         </div>
       </header>
@@ -85,7 +85,10 @@ export function Dashboard() {
       )}
 
       <section className="rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8 shadow-[var(--shadow-window)]">
-        <h2 className="text-lg font-semibold">You are signed in</h2>
+        <h2 className="text-lg font-semibold">Jump back in</h2>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">
+          Pick a workspace to open.
+        </p>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Link
             to="/app/forms"
@@ -99,7 +102,7 @@ export function Dashboard() {
                 Forms
               </span>
               <span className="text-sm text-[var(--color-muted)]">
-                View connected-guild forms and the upcoming builder shell.
+                Build slash commands and review submissions for your server.
               </span>
             </span>
           </Link>
@@ -116,7 +119,7 @@ export function Dashboard() {
                 Settings
               </span>
               <span className="text-sm text-[var(--color-muted)]">
-                Manage Discord server install, permissions, and environment.
+                Connect a Discord server or disconnect one you no longer need.
               </span>
             </span>
           </Link>
@@ -138,11 +141,11 @@ function NotConnectedBanner() {
         </span>
         <div>
           <h2 id="connect-heading" className="text-sm font-semibold">
-            Connect a Discord server
+            Connect a Discord server to get started
           </h2>
           <p className="text-sm text-[var(--color-muted)]">
-            Forms map to Discord slash commands. Install the Forge bot into
-            your server to get started.
+            Every form becomes a slash command. Install the Forge bot into
+            your server, then come back here to build.
           </p>
         </div>
       </div>

@@ -61,7 +61,7 @@ export function SignIn() {
                   Sign in to Forge
                 </h1>
                 <p className="text-sm text-[var(--color-muted)]">
-                  Discord form builder and approval engine.
+                  Design Discord forms and review submissions in one place.
                 </p>
               </div>
             </div>
@@ -76,7 +76,7 @@ export function SignIn() {
               ) : (
                 <GithubLogo size={18} weight="fill" aria-hidden />
               )}
-              <span>{pending ? "Redirecting to GitHub" : "Continue with GitHub"}</span>
+              <span>{pending ? "Opening GitHub" : "Continue with GitHub"}</span>
             </button>
 
             {error ? (

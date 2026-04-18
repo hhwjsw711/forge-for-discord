@@ -106,6 +106,19 @@ Mirrors `prds/forge-prd_1.md` section 12. Check items off as they ship. Move com
 
 ## Completed
 
+### 2026-04-18 — App-wide UI polish, font loading, copy clarity
+
+- Preloaded Inter (400/500/600/700) and JetBrains Mono (400/500) from Google Fonts in `index.html` with matching `preconnect` hints so the primary UI font no longer falls back to system-ui on first paint.
+- Repointed `--font-sans` in `src/styles/index.css` to lead with Inter, kept Matter and system-ui as fallbacks, turned on Inter OpenType features (`ss01`, `cv11`, `cv02`) plus antialiasing, and tightened heading letter-spacing so Inter matches the window chrome aesthetic.
+- Softened the workspace background gradient (dropped the radial stops from 8 to 6 percent accent mix) so the hero feels quieter and avoids the AI-slop "ambient glow" pattern called out in the anti-vibe-code skill.
+- Added a global `:focus-visible` outline pulled from the ink token so keyboard focus reads consistently on inputs, buttons, links, and any `[tabindex]` element without the default browser blue ring.
+- Honored `prefers-reduced-motion: reduce` by shortening animations and transitions to 0.001ms for opted-in users.
+- Clarity pass on copy across `src/components/auth/SignIn.tsx`, `src/pages/AccessDenied.tsx`, `src/pages/Dashboard.tsx`, `src/pages/Forms.tsx`, `src/pages/NewForm.tsx`, and `src/pages/Settings.tsx`. Rewrote subtitles, empty states, helper text, confirmation language ("can't be undone"), and every `formatCreateError`, `errorMessage`, and `formatDisconnectError` branch so each error tells the admin what to do next. Pending button labels now append an ellipsis ("Opening GitHub...", "Signing out...", "Disconnecting...") so they read as in-progress rather than a second verb.
+- Added `role="status"` and `aria-live="polite"` to the Forms loading state so screen readers announce "Loading server" instead of silent spin.
+- Ran the anti-vibe-code grep audit (`backdrop-blur-xl`, `group-hover:scale`, `animate-hero-glow`, `animate-fade-up`, `bg-*/N flex items-center justify-center`). All zero matches across `src/`.
+- Verified with `ReadLints` on every touched file. No linter errors.
+- Files touched: `index.html`, `src/styles/index.css`, `src/components/auth/SignIn.tsx`, `src/pages/AccessDenied.tsx`, `src/pages/Dashboard.tsx`, `src/pages/Forms.tsx`, `src/pages/NewForm.tsx`, `src/pages/Settings.tsx`, `files.md`, `changelog.md`, `TASK.md`.
+
 ### 2026-04-18 — Marketing copy, SEO metadata, favicon, auth screen polish
 
 - Added a developer marketing intro to `README.md` describing who Forge is for, what it replaces, and the Convex-only deployment tradeoffs.

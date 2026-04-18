@@ -91,8 +91,8 @@ export function NewForm() {
 
       <WindowFrame
         label="forge / forms / new"
-        title="Draft a slash command"
-        description="Give the command a clear title, a lowercase slash name, and a short description. Routing and fields come next."
+        title="Draft a new form"
+        description="Name it, pick a slash command, and write a short description. You'll add fields and routing on the next screen."
       >
         {currentGuild === undefined ? (
           <LoadingState label="Loading connected server" />
@@ -121,7 +121,8 @@ export function NewForm() {
                 maxLength={80}
               />
               <span className="text-xs text-[var(--color-muted)]">
-                Used in the dashboard and as the default forum title template.
+                Shown in the dashboard and used as the default forum thread
+                title.
               </span>
             </label>
 
@@ -143,7 +144,8 @@ export function NewForm() {
                 />
               </div>
               <span className="text-xs text-[var(--color-muted)]">
-                Use 1 to 32 lowercase letters, numbers, or hyphens. No slash.
+                1 to 32 characters. Lowercase letters, numbers, or hyphens only.
+                No leading slash.
               </span>
             </label>
 
@@ -159,7 +161,7 @@ export function NewForm() {
                 maxLength={100}
               />
               <span className="text-xs text-[var(--color-muted)]">
-                Discord shows this under the slash command picker.
+                Discord displays this under the command in the slash picker.
               </span>
             </label>
 
@@ -185,7 +187,7 @@ export function NewForm() {
 
               <div className="inline-flex items-center gap-2 text-sm text-[var(--color-muted)]">
                 <Sparkle size={16} weight="bold" aria-hidden />
-                <span>Fields, routing, and publish settings come next.</span>
+                <span>Next: add fields, pick a channel, then publish.</span>
               </div>
             </div>
           </form>
@@ -227,23 +229,23 @@ function LoadingState({ label }: { label: string }) {
 
 function formatCreateError(error: unknown): string {
   if (!(error instanceof Error)) {
-    return "Could not create the form draft.";
+    return "Something went wrong creating this draft. Try again.";
   }
 
   if (error.message.includes("command_name_taken")) {
-    return "That slash command name is already used in this server.";
+    return "That slash command name is already in use in this server. Pick another.";
   }
   if (error.message.includes("invalid_command_name")) {
-    return "Use 1 to 32 lowercase letters, numbers, or hyphens for the slash command.";
+    return "Slash command names need 1 to 32 lowercase letters, numbers, or hyphens.";
   }
   if (error.message.includes("title_required")) {
-    return "Add a title for the form.";
+    return "Add a title so you can find this form later.";
   }
   if (error.message.includes("description_required")) {
-    return "Add a short slash command description.";
+    return "Add a short description. Discord shows it in the slash picker.";
   }
   if (error.message.includes("guild_not_found")) {
-    return "The connected server could not be found. Reconnect it from Settings.";
+    return "This server is no longer connected. Reconnect it from Settings and try again.";
   }
 
   return error.message;

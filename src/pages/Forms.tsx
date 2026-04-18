@@ -62,8 +62,8 @@ export function Forms() {
 
       <WindowFrame
         label="forge / forms"
-        title="Form builder"
-        description="Every form becomes a Discord slash command. Start by connecting a server, then draft forms for mods and members to use."
+        title="Your forms"
+        description="Each form is published as a Discord slash command. Draft one for applications, tickets, bug bounties, or any internal request."
         action={
           currentGuild ? (
             <Link
@@ -198,10 +198,12 @@ export function Forms() {
 function NoGuildState() {
   return (
     <div className="flex flex-col gap-4 rounded-[var(--radius-window)] border border-dashed border-[var(--color-border)] bg-[var(--color-bg)] p-8">
-      <h3 className="text-base font-semibold">Connect a Discord server first</h3>
+      <h3 className="text-base font-semibold">
+        Connect a Discord server first
+      </h3>
       <p className="max-w-xl text-sm text-[var(--color-muted)]">
-        Forge scopes forms to a Discord server. Install the bot from Settings,
-        then come back here to create slash-command forms for that server.
+        Forms live inside a specific server. Install the Forge bot from
+        Settings, then come back to draft your first slash command.
       </p>
       <div>
         <Link
@@ -219,10 +221,12 @@ function NoGuildState() {
 function EmptyFormsState({ guildName }: { guildName: string }) {
   return (
     <div className="flex flex-col gap-4 rounded-[var(--radius-window)] border border-dashed border-[var(--color-border)] bg-[var(--color-bg)] p-8">
-      <h3 className="text-base font-semibold">No forms in {guildName} yet</h3>
+      <h3 className="text-base font-semibold">
+        No forms in {guildName} yet
+      </h3>
       <p className="max-w-xl text-sm text-[var(--color-muted)]">
-        Create your first draft, add the modal fields it needs, then publish the
-        slash command to Discord from the editor.
+        Create a draft, add the fields you need, then publish it as a slash
+        command. Your first form will show up here.
       </p>
     </div>
   );
@@ -230,8 +234,17 @@ function EmptyFormsState({ guildName }: { guildName: string }) {
 
 function LoadingState({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 text-sm text-[var(--color-muted)]">
-      <CircleNotch size={18} weight="bold" className="animate-spin" />
+    <div
+      className="flex items-center gap-3 text-sm text-[var(--color-muted)]"
+      role="status"
+      aria-live="polite"
+    >
+      <CircleNotch
+        size={18}
+        weight="bold"
+        className="animate-spin"
+        aria-hidden
+      />
       <span>{label}</span>
     </div>
   );

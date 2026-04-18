@@ -187,9 +187,9 @@ export function Settings() {
                 Discord servers
               </h2>
               <p className="mt-1 max-w-xl text-sm text-[var(--color-muted)]">
-                Connect a Discord server to let members run Forge slash
-                commands. You need admin access on that server and the Forge
-                bot credentials configured in Convex env.
+                Connect a server so its members can run Forge slash commands.
+                You need Manage Server permission on the Discord side, plus
+                bot credentials set in Convex env.
               </p>
             </div>
             <button
@@ -199,7 +199,7 @@ export function Settings() {
               className="inline-flex shrink-0 items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-ink)] bg-[var(--color-ink)] px-4 py-2.5 text-sm font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px disabled:opacity-60"
             >
               <DiscordLogo size={16} weight="fill" aria-hidden />
-              <span>{pending ? "Opening Discord" : "Connect server"}</span>
+              <span>{pending ? "Opening Discord..." : "Connect server"}</span>
             </button>
           </div>
 
@@ -238,9 +238,9 @@ function EmptyGuilds() {
         <Plus size={18} weight="bold" color="var(--color-muted)" />
       </span>
       <p className="max-w-sm text-sm text-[var(--color-muted)]">
-        No Discord servers connected yet. Click Connect server to start the
-        install flow. Forge will redirect you to Discord, ask you to pick a
-        server, and bounce you back when it's done.
+        No servers connected yet. Click Connect server to install the Forge
+        bot. Discord will ask which server to add it to, then bring you back
+        here when it's done.
       </p>
     </div>
   );
@@ -309,8 +309,8 @@ function GuildRow({
       </div>
 
       <p className="text-xs text-[var(--color-muted)]">
-        Channels, approval queue, and forum tags are configured per form in the
-        form editor under Command settings.
+        Channels, approval queue, and forum tags are set per form in the
+        editor under Command settings.
       </p>
 
       {confirmingGuildId === guild._id ? (
@@ -319,8 +319,8 @@ function GuildRow({
             Disconnect {guild.name} from Forge?
           </p>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            This removes the server from Settings and deletes saved forms plus
-            related workspace data tied to this server.
+            This deletes every form, submission, and audit row tied to this
+            server. It can't be undone.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
@@ -349,7 +349,7 @@ function GuildRow({
               )}
               <span>
                 {disconnectingGuildId === guild._id
-                  ? "Disconnecting"
+                  ? "Disconnecting..."
                   : "Disconnect server"}
               </span>
             </button>
@@ -403,13 +403,13 @@ function Banner({
 function errorMessage(code: string): string {
   switch (code) {
     case "access_denied":
-      return "You cancelled the install on Discord. No changes were made.";
+      return "You cancelled the install on Discord. Nothing changed.";
     case "invalid_state":
-      return "The install link expired or was used twice. Start again from here.";
+      return "That install link expired or was used twice. Start a fresh one from this page.";
     case "missing_params":
-      return "Discord did not return the expected parameters. Try once more.";
+      return "Discord didn't return the expected info. Try the install once more.";
     case "server_not_configured":
-      return "Missing DISCORD_BOT_TOKEN, DISCORD_PUBLIC_KEY, or DISCORD_APPLICATION_ID in Convex env.";
+      return "Convex env is missing DISCORD_BOT_TOKEN, DISCORD_PUBLIC_KEY, or DISCORD_APPLICATION_ID. Set them and retry.";
     default:
       return `Install failed: ${code}`;
   }
@@ -417,17 +417,17 @@ function errorMessage(code: string): string {
 
 function formatDisconnectError(error: unknown): string {
   if (!(error instanceof Error)) {
-    return "Could not disconnect the server.";
+    return "Couldn't disconnect the server. Try again in a moment.";
   }
 
   if (error.message.includes("guild_not_found")) {
-    return "That server is already disconnected.";
+    return "This server is already disconnected.";
   }
   if (error.message.includes("unauthenticated")) {
-    return "Your session expired. Sign in again and try once more.";
+    return "Your session expired. Sign in again, then retry.";
   }
   if (error.message.includes("access_denied")) {
-    return "You do not have permission to disconnect this server.";
+    return "You don't have permission to disconnect this server.";
   }
 
   return error.message;
