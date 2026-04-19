@@ -89,7 +89,7 @@ function HeroSection() {
             href={REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-1 inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
+            className="ml-1 inline-flex items-center gap-1.5 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
             <GithubLogo size={12} weight="bold" aria-hidden />
             <span>Open source on GitHub</span>
           </a>
@@ -124,14 +124,14 @@ function HeroSection() {
               href={REPO_FORK_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex w-fit items-center gap-2 rounded-full border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 py-3 text-sm font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px">
+              className="group inline-flex w-fit items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 py-3 text-sm font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px">
               <GitFork size={16} weight="bold" aria-hidden />
               Fork the repo
               <ArrowUpRight size={16} weight="bold" />
             </a>
             <Link
               to="/docs"
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
+              className="inline-flex w-fit items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
               Read the setup guide
               <ArrowUpRight size={16} weight="bold" />
             </Link>
@@ -139,7 +139,7 @@ function HeroSection() {
               href={CONVEX_COMMUNITY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
+              className="inline-flex w-fit items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
               <DiscordLogo size={16} weight="fill" aria-hidden />
               Join the Convex community
               <ArrowUpRight size={16} weight="bold" />
@@ -160,7 +160,7 @@ function InternalAppNotice() {
     <aside
       role="note"
       aria-label="Cloud version limited to Convex team only"
-      className="flex max-w-4xl flex-col gap-3 rounded-[20px] border border-[var(--color-accent)] bg-[var(--color-surface)] p-5 sm:flex-row sm:items-start sm:gap-4 sm:p-6">
+      className="flex max-w-4xl flex-col gap-3 rounded-[var(--radius-window)] border border-[var(--color-accent)] bg-[var(--color-surface)] p-5 sm:flex-row sm:items-start sm:gap-4 sm:p-6">
       <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full border border-[var(--color-accent)] bg-[var(--color-bg)] text-[var(--color-accent)]">
         <Info size={18} weight="fill" aria-hidden />
       </span>
@@ -253,7 +253,7 @@ function BuilderSection() {
           </p>
         </div>
 
-        <figure className="overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-window)]">
+        <figure className="overflow-hidden rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-window)]">
           <img
             src="/about/builder.svg"
             alt="Forge form builder with command settings on the left, modal fields in the middle, and a live Discord preview on the right"
@@ -329,7 +329,7 @@ function DiscordSection() {
           </p>
         </div>
 
-        <figure className="overflow-hidden rounded-[20px] border border-[#2b2d31] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+        <figure className="overflow-hidden rounded-[var(--radius-window)] border border-[#2b2d31] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
           <img
             src="/about/queue.svg"
             alt="Discord mod queue embed showing a pending application with Approve, Deny, and Open ticket buttons"
@@ -555,7 +555,7 @@ function TicketSection() {
           </p>
         </div>
 
-        <figure className="overflow-hidden rounded-[20px] border border-[var(--color-border)] shadow-[var(--shadow-window)]">
+        <figure className="overflow-hidden rounded-[var(--radius-window)] border border-[var(--color-border)] shadow-[var(--shadow-window)]">
           <img
             src="/about/ticket.svg"
             alt="Three forum threads side by side showing ticket lifecycle: open, in progress, and resolved"
@@ -589,7 +589,7 @@ function ResultsSection() {
           </p>
         </div>
 
-        <figure className="overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-window)]">
+        <figure className="overflow-hidden rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-window)]">
           <img
             src="/about/results.svg"
             alt="Results dashboard with approved, pending, denied, in progress, and hidden rows plus a Reply in Discord composer"
@@ -685,14 +685,14 @@ function CtaSection() {
             href={REPO_FORK_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-[var(--color-ink)] bg-[var(--color-ink)] px-6 py-4 text-base font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px">
+            className="group inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-ink)] bg-[var(--color-ink)] px-6 py-4 text-base font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px">
             <GitFork size={18} weight="bold" aria-hidden />
             Fork the repo
             <ArrowUpRight size={18} weight="bold" />
           </a>
           <Link
             to="/docs"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 text-base font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
+            className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 text-base font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
             Read the docs
             <ArrowUpRight size={18} weight="bold" />
           </Link>
@@ -700,7 +700,7 @@ function CtaSection() {
             href={CONVEX_COMMUNITY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 text-base font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
+            className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 text-base font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]">
             <DiscordLogo size={18} weight="fill" aria-hidden />
             Join the Convex community
             <ArrowUpRight size={18} weight="bold" />

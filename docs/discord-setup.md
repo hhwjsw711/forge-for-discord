@@ -151,7 +151,7 @@ You do not paste an invite URL manually. Forge mints a signed one for you.
 
 1. Deploy the backend: `npx convex dev` locally, or `npx convex deploy` in production.
 2. Start the frontend: `npm run dev`.
-3. Sign in with GitHub at `/auth/sign-in`. Your account must be `@convex.dev` per the access control PRD (`prds/access-control.md`).
+3. Sign in with GitHub at `/auth/sign-in`. Your account email must match the allowlist domain the admin configures in `convex/lib/access.ts` (see the access control PRD at `prds/access-control.md`).
 4. Go to `/app/settings` and click **Connect server**.
 5. The action `api.discord.generateInstallUrl` mints a CSRF nonce, stores it in the `oauthStates` table (10 minute TTL), and redirects you to Discord's OAuth authorize URL with `scope=bot applications.commands` and `permissions=<bitmask>`.
 6. Choose the server, confirm permissions, click Authorize.

@@ -50,7 +50,7 @@ One Convex deployment holds everything: backend, frontend, file storage, auth, c
 
 Admins use the dashboard. Submitters never leave Discord.
 
-> Internal app note: the repo at https://github.com/waynesutton/forge-for-discord is the same code that runs Convex's internal Forge instance. Sign in on that hosted deployment is locked to \`@convex.dev\` emails and will reject anyone else. To run Forge for your own Discord server, fork the repo, deploy your own Convex project, and follow this guide end to end.`,
+> Internal app note: the repo at https://github.com/waynesutton/forge-for-discord is the same code that runs an internal Forge instance. Sign in on that hosted deployment is locked to a single email domain the admin configures, and will reject anyone else. To run Forge for your own Discord server, fork the repo, deploy your own Convex project, and follow this guide end to end.`,
   },
   {
     slug: "features",
@@ -349,7 +349,7 @@ npx convex env set OWNER_EMAIL you@yourdomain.com --prod
 npx @robelest/convex-auth --prod
 \`\`\`
 
-\`OWNER_EMAIL\` is optional. Unset falls back to the upstream owner (\`wayne@convex.dev\`); set it per deployment so the owner follows your team.
+\`OWNER_EMAIL\` is optional but strongly recommended. Set it per deployment so the owner role follows your team. Unset falls back to a compile-time default in \`convex/lib/access.ts\`.
 
 **Gotchas**
 
@@ -378,7 +378,7 @@ Everyone else lands on \`/auth/denied\` with a one-shot sign out so the session 
 convex/lib/access.ts
 \`\`\`
 
-That file exports \`isAllowedEmail(email)\` and \`roleForEmail(email)\`. They read a domain match (\`@convex.dev\` in the current build) and an owner email pulled from the \`OWNER_EMAIL\` Convex env var, falling back to \`wayne@convex.dev\` when unset. Rewrite the file to change the domain rule. Set the env var to change the owner without touching code.
+That file exports \`isAllowedEmail(email)\` and \`roleForEmail(email)\`. They read a single email-suffix domain the admin configures (set via \`ALLOWED_EMAIL_SUFFIX\` in the file) and an owner email pulled from the \`OWNER_EMAIL\` Convex env var, with a compile-time fallback in the same file. Rewrite \`ALLOWED_EMAIL_SUFFIX\` to change the domain rule. Set the env var to change the owner without touching code.
 
 **To add an admin for your own install**
 
@@ -1080,7 +1080,7 @@ function CopyInline({ text }: { text: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-[11px] text-white/80 transition-colors hover:border-white/40 hover:text-white"
+      className="inline-flex items-center gap-1.5 rounded-[var(--radius-window)] border border-white/15 bg-white/5 px-2 py-0.5 text-[11px] text-white/80 transition-colors hover:border-white/40 hover:text-white"
     >
       {copied ? (
         <CheckCircle size={12} weight="fill" />
@@ -1167,7 +1167,7 @@ function renderInline(text: string): ReactNode {
       tokens.push(
         <code
           key={key++}
-          className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-1.5 py-0.5 font-mono text-[13px] text-[var(--color-ink)]"
+          className="rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-bg)] px-1.5 py-0.5 font-mono text-[13px] text-[var(--color-ink)]"
         >
           {found.slice(1, -1)}
         </code>,

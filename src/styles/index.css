@@ -20,7 +20,7 @@
   --font-mono:
     "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;
 
-  --radius-window: 12px;
+  --radius-window: 0.25rem;
 
   --shadow-window:
     2px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);

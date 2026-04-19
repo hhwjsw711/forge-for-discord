@@ -4,7 +4,7 @@ Everything you need to run Forge against any Discord server. Written for a first
 
 Forge is a self-hostable Discord form builder and approval engine. You design forms in a web dashboard, publish each one as a slash command, collect submissions through native Discord modals, optionally route them through a mod queue, and publish approved answers into any text or forum channel. Real time end to end via Convex.
 
-> Heads up: this repo is the same code that powers Convex's internal Forge instance. Sign in on that hosted deployment is locked to `@convex.dev` email addresses and will reject everyone else. To run Forge for your own Discord server, fork https://github.com/waynesutton/forge-for-discord, deploy your own Convex project, and follow this guide end to end. Every step below assumes you are running your own fork, not the Convex-hosted instance.
+> Heads up: this repo is the same code that powers an internal Forge instance. Sign in on that hosted deployment is locked to a single email domain the admin configures, and will reject everyone else. To run Forge for your own Discord server, fork https://github.com/waynesutton/forge-for-discord, deploy your own Convex project, and follow this guide end to end. Every step below assumes you are running your own fork, not the hosted instance.
 
 ## Contents
 
@@ -299,7 +299,7 @@ npx convex env set OWNER_EMAIL you@yourdomain.com --prod
 npx @robelest/convex-auth --prod
 ```
 
-`OWNER_EMAIL` is optional. If you leave it unset, Forge falls back to the upstream owner email (`wayne@convex.dev`) and every signed-in `@convex.dev` admin stays on `role: "admin"`. Set it per deployment so the owner follows your team.
+`OWNER_EMAIL` is optional but strongly recommended. Set it per deployment so the owner role follows your team. If you leave it unset, Forge falls back to a compile-time default in `convex/lib/access.ts` and every other allowlisted admin stays on `role: "admin"`.
 
 Frontend `.env.local` only needs `VITE_CONVEX_URL`. The sign-in flow reads everything else from Convex at runtime.
 
@@ -324,7 +324,7 @@ The allowlist lives in a single file:
 convex/lib/access.ts
 ```
 
-That file exports two pure helpers, `isAllowedEmail(email)` and `roleForEmail(email)`. They read a domain match (`@convex.dev` in the current build) and an owner email pulled from the `OWNER_EMAIL` Convex env var, falling back to `wayne@convex.dev` when unset. Rewrite the file to change the domain rule. Set the env var to change the owner without touching code.
+That file exports two pure helpers, `isAllowedEmail(email)` and `roleForEmail(email)`. They read a single email-suffix domain the admin configures (set via `ALLOWED_EMAIL_SUFFIX` in the file) and an owner email pulled from the `OWNER_EMAIL` Convex env var, with a compile-time fallback in the same file. Rewrite `ALLOWED_EMAIL_SUFFIX` to change the domain rule. Set the env var to change the owner without touching code.
 
 To add an admin for your own Forge install:
 

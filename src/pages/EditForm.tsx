@@ -1604,7 +1604,7 @@ function FormEditor({ form }: { form: EditableForm }) {
                             {index + 1}
                           </span>
                           <span
-                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[6px] border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_70%,white)] text-[var(--color-muted)] transition-colors group-hover:border-[var(--color-ink)] group-hover:text-[var(--color-ink)]"
+                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_70%,white)] text-[var(--color-muted)] transition-colors group-hover:border-[var(--color-ink)] group-hover:text-[var(--color-ink)]"
                             aria-hidden
                           >
                             <PencilSimple size={12} weight="bold" />
@@ -1847,7 +1847,7 @@ function FieldTypePicker({
                     >
                       <span
                         aria-hidden
-                        className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_70%,white)] text-[var(--color-ink)]"
+                        className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_70%,white)] text-[var(--color-ink)]"
                       >
                         <Icon size={14} weight="bold" />
                       </span>

@@ -106,6 +106,23 @@ Mirrors `prds/forge-prd_1.md` section 12. Check items off as they ship. Move com
 
 ## Completed
 
+### 2026-04-19 01:09 UTC — Tighten global border-radius to 0.25rem
+
+- Updated `--radius-window` in `src/styles/index.css` from `12px` to `0.25rem` (4px). Single-token edit cascades to the 70+ `rounded-[var(--radius-window)]` usages across Dashboard, Forms, Settings, Docs, SignIn, AccessDenied, NewForm, EditForm, FormLogs, FormResults, WindowFrame, and WindowTabs so every card, dropdown, button, and alert shares one crisp, technical edge.
+- Normalized `src/pages/About.tsx` in the same pass: five `rounded-[20px]` figure and aside boxes (InternalAppNotice plus four product mockups) and six pill-shaped CTAs (hero trio plus closing trio plus GitHub eyebrow pill) now use the shared token. Intentional circles kept as `rounded-full` (Mac window dots, icon badges, step numbers, avatars, social icon buttons).
+- Normalized stray values: two `rounded-md` inline code chips in `src/pages/Docs.tsx`, the `rounded-xl` tooltip in `src/components/ui/Tooltip.tsx`, and two `rounded-[6px]/[8px]` drag-handle chips in `src/pages/EditForm.tsx` all migrated to `rounded-[var(--radius-window)]`.
+- Verified with `ReadLints` on every edited file (clean) and a repo-wide grep for `rounded-(sm|md|lg|xl|2xl|3xl)` and hard-coded pixel radii on boxes that returns zero matches.
+- Files touched: `src/styles/index.css`, `src/pages/About.tsx`, `src/pages/Docs.tsx`, `src/pages/EditForm.tsx`, `src/components/ui/Tooltip.tsx`, `files.md`, `changelog.md`, `TASK.md`.
+
+### 2026-04-18 — Scrub @convex.dev and owner email out of docs
+
+- Removed the hardcoded Convex email domain (`@convex.dev`) and the upstream owner email (`wayne@convex.dev`) from every public doc surface so the hosted instance's team domain and owner inbox never ship in a fork.
+- `docs/setup-guide.md`: hosted-instance heads-up note (line 7) now says "locked to a single email domain the admin configures". The `OWNER_EMAIL` paragraph (line 302) points readers at the compile-time fallback in `convex/lib/access.ts` instead of naming the email. Allowlist helper description (line 327) now reads "a single email-suffix domain the admin configures, set via `ALLOWED_EMAIL_SUFFIX`".
+- `docs/discord-setup.md`: step 3 under "Install the bot into your server" now says "Your account email must match the allowlist domain the admin configures in `convex/lib/access.ts`".
+- `src/pages/Docs.tsx`: mirrored the same three edits inside the in-app docs markdown strings so the public `/docs` page and the on-disk guide stay in sync.
+- Verified with `ReadLints` (clean) and a repeat `Grep` across `docs/` and `src/pages/Docs.tsx` that returns zero matches for either string.
+- Files touched: `docs/setup-guide.md`, `docs/discord-setup.md`, `src/pages/Docs.tsx`, `files.md`, `changelog.md`, `TASK.md`.
+
 ### 2026-04-18 — Mark hosted Forge as internal Convex app
 
 - Removed every "sign in" CTA from `src/pages/About.tsx` (hero "Sign in with GitHub" + closing "Sign in to Forge") and added an `InternalAppNotice` card in the hero explaining that sign in on the hosted deployment is locked to `@convex.dev` emails and pointing visitors at the fork + docs path. Primary CTA is now "Fork the repo" (deep-links to `/fork`), backed by the setup guide and the Convex community.
