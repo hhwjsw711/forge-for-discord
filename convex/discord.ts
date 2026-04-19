@@ -241,6 +241,81 @@ export const registerCommand = action({
   },
 });
 
+// Inverse of `registerCommand`. Removes the slash command from Discord for
+// the form's guild, flips the Forge `published` flag to false, and writes
+// an audit row so the Results log shows who pulled the command down.
+//
+// Discord returns 204 on success and 404 when the command was already gone
+// (for example the admin reinstalled the bot or deleted the command by
+// hand). Both are treated as success so Forge does not get stuck in a
+// "published" state when Discord has already forgotten about the command.
+//
+// When `discordCommandId` is unset we skip the Discord call entirely and
+// just flip the flag + write the audit row. Safe to call on a form that
+// never published.
+export const unregisterCommand = action({
+  args: {
+    formId: v.id("forms"),
+  },
+  returns: v.object({
+    hadDiscordCommand: v.boolean(),
+  }),
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ hadDiscordCommand: boolean }> => {
+    const viewer = await requireAllowedWorkspaceUser(ctx);
+
+    const target = await ctx.runQuery(internal.forms.getForUnpublish, {
+      formId: args.formId,
+    });
+    if (!target) {
+      throw new ConvexError({ code: "form_not_found" });
+    }
+
+    const hadDiscordCommand = Boolean(target.discordCommandId);
+
+    if (target.discordCommandId) {
+      const res = await fetch(
+        `${DISCORD_API_BASE}/applications/${target.applicationId}/guilds/${target.discordGuildId}/commands/${target.discordCommandId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bot ${target.botToken}`,
+          },
+        },
+      );
+      if (!res.ok && res.status !== 404) {
+        const text = await res.text().catch(() => "");
+        console.error("discord_unregister_command_failed", {
+          status: res.status,
+          body: text.slice(0, 500),
+        });
+        throw new ConvexError({
+          code: "discord_unregister_command_failed",
+          status: res.status,
+        });
+      }
+    }
+
+    await ctx.runMutation(internal.forms.setPublicationState, {
+      formId: target.formId,
+      published: false,
+      discordCommandId: undefined,
+    });
+
+    const actorId =
+      typeof viewer.email === "string" ? viewer.email : "unknown_admin";
+    await ctx.runMutation(internal.forms.recordCommandUnpublished, {
+      formId: target.formId,
+      actorId,
+      hadDiscordCommand,
+    });
+
+    return { hadDiscordCommand };
+  },
+});
+
 export const refreshGuildChannels = action({
   args: {
     guildId: v.id("guilds"),

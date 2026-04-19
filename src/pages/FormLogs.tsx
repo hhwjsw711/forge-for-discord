@@ -48,6 +48,8 @@ const ACTION_LABELS: Record<string, string> = {
   ticket_reopen: "Ticket reopened",
   ticket_close: "Ticket closed",
   ticket_auto_close: "Ticket auto closed",
+  form_unpublished: "Form unpublished",
+  slash_command_unpublished_attempt: "Slash command hit draft form",
 };
 
 function formatActionLabel(action: string): string {

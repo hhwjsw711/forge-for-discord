@@ -456,6 +456,94 @@ export const setPublicationState = internalMutation({
   },
 });
 
+// Read bot credentials + the current Discord command id for a form without
+// running the publish readiness validator. Used by the unpublish flow where
+// we want to DELETE the command on Discord even if the form is no longer
+// in a "ready to publish" state (missing fields, stale role pickers, etc).
+export const getForUnpublish = internalQuery({
+  args: { formId: v.id("forms") },
+  returns: v.union(v.null(), publishPayloadValidator),
+  handler: async (ctx, args) => {
+    const form = await ctx.db.get("forms", args.formId);
+    if (!form) {
+      return null;
+    }
+
+    const guild = await ctx.db.get("guilds", form.guildId);
+    if (!guild) {
+      throw new ConvexError({ code: "guild_not_found" });
+    }
+
+    return {
+      formId: form._id,
+      guildId: form.guildId,
+      commandName: form.commandName,
+      commandDescription: form.commandDescription,
+      discordCommandId: form.discordCommandId,
+      applicationId: guild.applicationId,
+      discordGuildId: guild.discordGuildId,
+      botToken: guild.botToken,
+    };
+  },
+});
+
+// Audit row for a Discord slash command that was invoked while the form was
+// still in draft state. Surfaces the attempt on the Form Results activity
+// log so moderators know someone tried the command before it was ready.
+// The Discord-side response is still the ephemeral "This form is not
+// published yet." string so we leak nothing to the caller.
+export const recordUnpublishedSlashAttempt = internalMutation({
+  args: {
+    formId: v.id("forms"),
+    actorId: v.string(),
+    commandName: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const form = await ctx.db.get("forms", args.formId);
+    if (!form) {
+      return null;
+    }
+    await ctx.db.insert("auditLog", {
+      guildId: form.guildId,
+      actorId: args.actorId,
+      action: "slash_command_unpublished_attempt",
+      formId: args.formId,
+      metadata: { commandName: args.commandName },
+    });
+    return null;
+  },
+});
+
+// Audit row for the admin-driven unpublish action. Written after the Discord
+// DELETE succeeds and the `published` flag flips to false. Stored as info
+// severity so it shows as a regular log line on the Results page.
+export const recordCommandUnpublished = internalMutation({
+  args: {
+    formId: v.id("forms"),
+    actorId: v.string(),
+    hadDiscordCommand: v.boolean(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const form = await ctx.db.get("forms", args.formId);
+    if (!form) {
+      return null;
+    }
+    await ctx.db.insert("auditLog", {
+      guildId: form.guildId,
+      actorId: args.actorId,
+      action: "form_unpublished",
+      formId: args.formId,
+      metadata: {
+        commandName: form.commandName,
+        hadDiscordCommand: args.hadDiscordCommand,
+      },
+    });
+    return null;
+  },
+});
+
 async function requireAllowedUser(ctx: QueryCtx | MutationCtx) {
   return await requireAllowedViewer(ctx);
 }

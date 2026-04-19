@@ -4,6 +4,21 @@ All notable changes to Forge. Format follows [keepachangelog.com](https://keepac
 
 ## [Unreleased]
 
+## 2026-04-19 03:02 UTC
+
+### Added
+
+- Unpublish a form from the editor. (2026-04-19 03:02 UTC) New action `convex/discord.ts#unregisterCommand` DELETEs the Discord guild slash command, flips `forms.published` back to false, clears `discordCommandId`, and writes a `form_unpublished` audit row. New internal helpers `forms.getForUnpublish`, `forms.recordUnpublishedSlashAttempt`, and `forms.recordCommandUnpublished` back the flow. `src/pages/EditForm.tsx` gains an Unpublish button next to Publish in both the sticky toolbar and the fields-pane bottom row, plus a site-design-system `UnpublishConfirmDialog` that mirrors `ConfirmDeleteDialog` so the confirm surface feels the same as delete. 204 and 404 from Discord are both treated as success so Forge never gets stuck in a "published" state after Discord has already forgotten the command. `FormLogs.tsx` adds labels for the two new action names. PRD: `prds/slash-command-debug-logging-and-unpublish.md`.
+- Differentiated logging and audit trail for slash commands that miss. (2026-04-19 03:02 UTC) `convex/http.ts` now splits the `/interactions` command path into two explicit branches: `console.warn("slash_command_form_not_found", { discordGuildId, commandName })` when the guild or form is missing (no audit row, we have no verified guild id to scope one to), and `console.warn("slash_command_form_unpublished", { ... })` plus a `slash_command_unpublished_attempt` audit row when the form exists but is draft. The 2026-04-19 deployment-mismatch bug would have shown up immediately with this in place.
+
+### Verification
+
+- `npx tsc --noEmit -p convex/tsconfig.json` clean
+- `npx tsc --noEmit -p tsconfig.app.json` clean
+- `npx eslint convex/http.ts convex/forms.ts convex/discord.ts src/pages/EditForm.tsx src/pages/FormLogs.tsx` clean
+
+## 2026-04-19 02:01 UTC
+
 ### Changed
 
 - Tightened the global border-radius from 12px to 0.25rem (4px) so every card, dropdown, button, tooltip, and inline code chip shares one crisp, technical edge. (2026-04-19 01:09 UTC) Single source of truth edit in `src/styles/index.css` (`--radius-window: 0.25rem`) cascades to the 70+ `rounded-[var(--radius-window)]` usages across the app. Normalized the About page in the same pass: five `rounded-[20px]` hero and figure boxes (InternalAppNotice, builder mockup, Discord mockup, ticket mockup, results mockup) and six pill-shaped CTA buttons (hero trio plus closing trio) now use the shared token. Normalized two stray `rounded-md` inline code chips in `src/pages/Docs.tsx`, the `rounded-xl` tooltip in `src/components/ui/Tooltip.tsx`, and two `rounded-[6px]/[8px]` drag-handle chips in `src/pages/EditForm.tsx`. Intentional circles (Mac window dots, icon badges, step numbers, avatars, social icon buttons) remain `rounded-full`. Verified with `ReadLints` on every edited file (clean) and a repo-wide grep for `rounded-(sm|md|lg|xl|2xl|3xl)` and hard-coded pixel radii that returns zero matches outside intentional circles.
@@ -34,6 +49,8 @@ All notable changes to Forge. Format follows [keepachangelog.com](https://keepac
 - `/about` hero image showed as a broken icon because all four product mockup SVGs used HTML-only named entities (`&middot;`, `&hellip;`, `&rarr;`) inside `<text>` nodes. SVG is strict XML, so browsers refused to parse them and rendered the `alt` text as a collapsed `img` with no intrinsic size. Replaced every instance in `public/about/builder.svg`, `public/about/queue.svg`, `public/about/ticket.svg`, and `public/about/results.svg` with the literal Unicode characters (U+00B7, U+2026, U+2192). Verified with `xmllint --noout` on all four files.
 - Added open source messaging and two new outbound links to `src/pages/About.tsx`: a GitHub pill in the hero eyebrow, a "View the repo" CTA next to the sign in button, a source-on-GitHub line in the intro paragraph, a "Source" row in the stack table linking to the public repo, a linked "Phosphor Icons" row pointing at `phosphoricons.com`, and a "Star it on GitHub" button in the closing CTA. Repo URL centralized as `REPO_URL` and `PHOSPHOR_URL` at the top of the file so it is one edit if either moves.
 - Pointed every Forge repo link at the canonical `https://github.com/waynesutton/forge-for-discord` URL. Updated `REPO_URL` in `src/pages/About.tsx` (which covers every hero pill, CTA, stack row, and closing button on the marketing page in one edit) and added a "Forge source code" line to the References section of `docs/setup-guide.md`, `docs/discord-setup.md`, and the in-app mirror in `src/pages/Docs.tsx`.
+
+## earlier sessions (timestamps unavailable)
 
 ### Security
 

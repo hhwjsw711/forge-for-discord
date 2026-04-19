@@ -106,6 +106,17 @@ Mirrors `prds/forge-prd_1.md` section 12. Check items off as they ship. Move com
 
 ## Completed
 
+### 2026-04-19 03:02 UTC — Slash command debug logging and form unpublish
+
+- Context: slash command `/jobs` returned "This form is not published yet." on the live site while the admin UI clearly showed Published. Root cause traced earlier in the session to a deployment-mismatch (Discord Interactions Endpoint URL pointed at the dev Convex deployment instead of prod). User fixed the portal; this task is the follow-up hardening.
+- `convex/http.ts` splits the two failure paths in `/interactions` command type 2. Missing form or guild: `console.warn("slash_command_form_not_found", { discordGuildId, commandName })` and bail. Form exists but `published === false`: `console.warn("slash_command_form_unpublished", ...)` plus an audit row via `internal.forms.recordUnpublishedSlashAttempt` so the Results log shows who tried the command.
+- `convex/forms.ts` gains three helpers: `recordUnpublishedSlashAttempt` (info audit row, keyed to form guild so a bad Discord guild id cannot write to another tenant), `getForUnpublish` (bot creds + command id without running `validateFormReadyForPublish`), and `recordCommandUnpublished` (writes `form_unpublished` row after a successful admin unpublish).
+- `convex/discord.ts` gains `unregisterCommand` action: auth guard, DELETEs the Discord guild command (treats 204 and 404 as success), flips `published` to false, clears `discordCommandId`, writes the audit row. Idempotent when `discordCommandId` is already unset.
+- `src/pages/EditForm.tsx` adds an Unpublish button in both the sticky toolbar and the fields-pane bottom row, visible only when the form is currently published or was published before. Opens `UnpublishConfirmDialog` (site design system, mirrors `ConfirmDeleteDialog` in `FormResults.tsx`, no browser confirm).
+- `src/pages/FormLogs.tsx` adds readable labels for `form_unpublished` and `slash_command_unpublished_attempt` so the Results log is self-describing.
+- Verified with `npx tsc --noEmit -p convex/tsconfig.json`, `npx tsc --noEmit -p tsconfig.app.json`, and `npx eslint` on the five touched files. All clean.
+- Files touched: `convex/http.ts`, `convex/forms.ts`, `convex/discord.ts`, `src/pages/EditForm.tsx`, `src/pages/FormLogs.tsx`, `prds/slash-command-debug-logging-and-unpublish.md`, `changelog.md`, `files.md`, `TASK.md`.
+
 ### 2026-04-19 01:58 UTC — Keep Discord install callback on the caller's origin
 
 - Root cause of the bug the user reported: `convex/http.ts` built every redirect from `process.env.APP_URL ?? url.origin`. `APP_URL` on the prod Convex deployment was still pinned to the `http://localhost:5173` value from `.env.example`, so a cancelled or completed Discord install on the live `convex.site` host 302d admins to `localhost:5173/app/settings?error=...`.

@@ -25,6 +25,7 @@ import {
   ListBullets,
   PencilSimple,
   Plus,
+  Prohibit,
   Question,
   Queue,
   SidebarSimple,
@@ -317,6 +318,7 @@ export function EditForm() {
 function FormEditor({ form }: { form: EditableForm }) {
   const updateForm = useMutation(api.forms.update);
   const publishForm = useAction(api.discord.registerCommand);
+  const unpublishForm = useAction(api.discord.unregisterCommand);
   const refreshGuildChannels = useAction(api.discord.refreshGuildChannels);
   const refreshGuildRoles = useAction(api.discord.refreshGuildRoles);
   const guildChannels =
@@ -392,6 +394,8 @@ function FormEditor({ form }: { form: EditableForm }) {
   const [success, setSuccess] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isUnpublishing, setIsUnpublishing] = useState(false);
+  const [unpublishDialogOpen, setUnpublishDialogOpen] = useState(false);
   const [isRefreshingChannels, setIsRefreshingChannels] = useState(false);
   const [isRefreshingRoles, setIsRefreshingRoles] = useState(false);
   const [isPublished, setIsPublished] = useState(form.published);
@@ -564,6 +568,33 @@ function FormEditor({ form }: { form: EditableForm }) {
       }
     } finally {
       setIsPublishing(false);
+    }
+  };
+
+  // Inverse of handlePublish. DELETEs the Discord guild command, flips the
+  // Forge `published` flag to false, and writes an audit row. Leaves the
+  // local draft state alone so admins can re-publish without losing work.
+  const handleUnpublish = async () => {
+    setError(null);
+    setSuccess(null);
+    setIsUnpublishing(true);
+    try {
+      const result = await unpublishForm({ formId: form._id });
+      setIsPublished(false);
+      setUnpublishDialogOpen(false);
+      setSuccess(
+        result.hadDiscordCommand
+          ? "Unpublished. The slash command is no longer available in Discord."
+          : "Marked as draft. No Discord command was active.",
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Could not unpublish the form.");
+      }
+    } finally {
+      setIsUnpublishing(false);
     }
   };
 
@@ -806,6 +837,20 @@ function FormEditor({ form }: { form: EditableForm }) {
                   </span>
                 </button>
               </Tooltip>
+
+              {isPublished || form.discordCommandId ? (
+                <Tooltip content="Remove the slash command from Discord and flip this form back to draft. Your field config is kept so you can re-publish later.">
+                  <button
+                    type="button"
+                    onClick={() => setUnpublishDialogOpen(true)}
+                    disabled={isSaving || isPublishing || isUnpublishing}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-window)] border border-[color-mix(in_oklab,var(--color-danger)_35%,var(--color-border))] bg-[var(--color-surface)] px-4 py-2.5 text-sm font-medium text-[var(--color-danger)] transition-colors hover:border-[var(--color-danger)] disabled:opacity-60"
+                  >
+                    <Prohibit size={16} weight="bold" aria-hidden />
+                    <span>Unpublish</span>
+                  </button>
+                </Tooltip>
+              ) : null}
             </div>
           </div>
 
@@ -1541,6 +1586,20 @@ function FormEditor({ form }: { form: EditableForm }) {
                       </span>
                     </button>
                   </Tooltip>
+
+                  {isPublished || form.discordCommandId ? (
+                    <Tooltip content="Remove the slash command from Discord and flip this form back to draft. Your field config is kept so you can re-publish later.">
+                      <button
+                        type="button"
+                        onClick={() => setUnpublishDialogOpen(true)}
+                        disabled={isSaving || isPublishing || isUnpublishing}
+                        className="inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-window)] border border-[color-mix(in_oklab,var(--color-danger)_35%,var(--color-border))] bg-[var(--color-surface)] px-4 py-2.5 text-sm font-medium text-[var(--color-danger)] transition-colors hover:border-[var(--color-danger)] disabled:opacity-60"
+                      >
+                        <Prohibit size={16} weight="bold" aria-hidden />
+                        <span>Unpublish</span>
+                      </button>
+                    </Tooltip>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -1777,6 +1836,79 @@ function FormEditor({ form }: { form: EditableForm }) {
         ) : null}
         </div>
         ) : null}
+      </div>
+
+      {unpublishDialogOpen ? (
+        <UnpublishConfirmDialog
+          commandName={form.commandName}
+          isBusy={isUnpublishing}
+          onCancel={() => {
+            if (isUnpublishing) return;
+            setUnpublishDialogOpen(false);
+          }}
+          onConfirm={() => void handleUnpublish()}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+// Confirmation modal for the Unpublish action. Mirrors the pattern used by
+// ConfirmDeleteDialog in FormResults.tsx so the two destructive flows feel
+// the same. Site design system only, no browser confirm.
+function UnpublishConfirmDialog({
+  commandName,
+  isBusy,
+  onCancel,
+  onConfirm,
+}: {
+  commandName: string;
+  isBusy: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+    >
+      <div className="flex w-full max-w-md flex-col gap-4 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-window)]">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-ink)]">
+            Unpublish /{commandName}?
+          </h2>
+          <p className="text-sm text-[var(--color-muted)]">
+            This removes the slash command from Discord and flips this form
+            back to draft. Your fields, routing, and role settings are kept
+            so you can re-publish later. Existing submissions are not
+            touched.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isBusy}
+            className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isBusy}
+            className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-danger)] bg-[var(--color-danger)] px-3 py-2 text-sm font-medium text-[var(--color-surface)] transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isBusy ? (
+              <CircleNotch size={14} weight="bold" className="animate-spin" aria-hidden />
+            ) : (
+              <Prohibit size={14} weight="bold" aria-hidden />
+            )}
+            <span>Unpublish</span>
+          </button>
+        </div>
       </div>
     </div>
   );

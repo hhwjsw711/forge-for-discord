@@ -17,6 +17,16 @@ type DiscordCommandInteraction = {
   guild_id?: string;
   member?: {
     roles?: Array<string>;
+    user?: {
+      id?: string;
+      username?: string;
+      global_name?: string | null;
+    };
+  };
+  user?: {
+    id?: string;
+    username?: string;
+    global_name?: string | null;
   };
   data?: {
     name?: string;
@@ -132,7 +142,33 @@ http.route({
         discordGuildId,
         commandName,
       });
-      if (!form || !form.published) {
+      // Two different failure modes, same user-facing response. Split the
+      // branches so logs and the audit log tell us which one fired. The
+      // "form not found" path does NOT write an audit row: we have no
+      // verified guild id to scope it to, and accepting writes from
+      // unverified Discord guild ids would let anyone spam a neighbor's
+      // log. The "form is draft" path DOES write an audit row so the
+      // Results page surfaces the attempt.
+      if (!form) {
+        console.warn("slash_command_form_not_found", {
+          discordGuildId,
+          commandName,
+        });
+        return ephemeralResponse("This form is not published yet.");
+      }
+      if (!form.published) {
+        const actorId =
+          payload.member?.user?.id ?? payload.user?.id ?? "unknown";
+        console.warn("slash_command_form_unpublished", {
+          discordGuildId,
+          commandName,
+          formId: form._id,
+        });
+        await ctx.runMutation(internal.forms.recordUnpublishedSlashAttempt, {
+          formId: form._id,
+          actorId,
+          commandName,
+        });
         return ephemeralResponse("This form is not published yet.");
       }
       if (form.fields.length === 0) {
