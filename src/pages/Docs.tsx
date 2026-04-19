@@ -7,6 +7,7 @@ import {
   FileText,
   Gear,
   GithubLogo,
+  Info,
   Link as LinkIcon,
   Lightning,
 } from "@phosphor-icons/react";
@@ -728,23 +729,33 @@ export function Docs() {
           </div>
         </div>
 
-        {showAppLinks ? (
+        <div className="flex items-center gap-2">
           <Link
-            to="/app/settings"
+            to="/about"
             className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]"
           >
-            <Gear size={16} weight="bold" aria-hidden />
-            <span>Settings</span>
+            <Info size={16} weight="bold" aria-hidden />
+            <span>About</span>
           </Link>
-        ) : (
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-ink)] bg-[var(--color-ink)] px-3 py-2 text-sm font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px"
-          >
-            <GithubLogo size={16} weight="bold" aria-hidden />
-            <span>Sign in</span>
-          </Link>
-        )}
+
+          {showAppLinks ? (
+            <Link
+              to="/app/settings"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]"
+            >
+              <Gear size={16} weight="bold" aria-hidden />
+              <span>Settings</span>
+            </Link>
+          ) : (
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-window)] border border-[var(--color-ink)] bg-[var(--color-ink)] px-3 py-2 text-sm font-medium text-[var(--color-surface)] shadow-[var(--shadow-window)] transition-transform duration-150 active:translate-y-px"
+            >
+              <GithubLogo size={16} weight="bold" aria-hidden />
+              <span>Sign in</span>
+            </Link>
+          )}
+        </div>
       </header>
 
       {showAppLinks ? (
