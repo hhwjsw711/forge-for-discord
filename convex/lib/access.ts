@@ -8,8 +8,8 @@
 // touching code. The default preserves the current owner on the Convex dev
 // deployment. Flagged in the 2026-04-18 security audit (finding LOW #7).
 
-const ALLOWED_EMAIL_SUFFIX = "@convex.dev";
-const DEFAULT_OWNER_EMAIL = "wayne@convex.dev";
+const ALLOWED_EMAIL_SUFFIX = "@qq.com";
+const DEFAULT_OWNER_EMAIL = "381093478@qq.com";
 
 function ownerEmail(): string {
   const raw = process.env.OWNER_EMAIL;
